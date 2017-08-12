@@ -19,11 +19,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.experimental.categories.Category;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
-import org.pitest.testapi.TestClassIdentifier;
+import org.pitest.classpath.TestClassIdentifier;
 import org.pitest.testapi.TestGroupConfig;
+import org.pitest.util.Preconditions;
 
 public class JUnitTestClassIdentifier implements TestClassIdentifier {
 
@@ -31,6 +31,8 @@ public class JUnitTestClassIdentifier implements TestClassIdentifier {
     private final Collection<String> excludedRunners;
 
     public JUnitTestClassIdentifier(final TestGroupConfig config, final Collection<String> excludedRunners) {
+        Preconditions.checkNotNull(config);
+        Preconditions.checkNotNull(excludedRunners);
         this.config = config;
         this.excludedRunners = excludedRunners;
     }
@@ -69,8 +71,7 @@ public class JUnitTestClassIdentifier implements TestClassIdentifier {
     }
 
     private String[] getCategories(final ClassInfo a) {
-        final Class<Category> categoryClass = Category.class;
-        final Object[] categoryArray = (Object[]) a.getClassAnnotationValue(ClassName.fromClass(categoryClass));
+        final Object[] categoryArray = (Object[]) a.getClassAnnotationValue(ClassName.fromString("org.junit.experimental.categories.Category"));
         if (categoryArray == null) {
             // this check is not working correctly (at least for maven) - category is picked up from the junit pit depends on
             // final boolean isCategoryInherited = categoryClass.isAnnotationPresent(Inherited.class);

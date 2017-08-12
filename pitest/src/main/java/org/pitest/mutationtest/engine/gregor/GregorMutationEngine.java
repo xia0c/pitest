@@ -22,6 +22,7 @@ import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
+import org.pitest.mutationtest.engine.EngineArguments;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationEngine;
 
@@ -35,11 +36,14 @@ public class GregorMutationEngine implements MutationEngine {
 
   private final Set<MethodMutatorFactory> mutationOperators = new LinkedHashSet<MethodMutatorFactory>();
   private final Predicate<MethodInfo>     methodFilter;
+  private final EngineArguments arguments;
 
-  public GregorMutationEngine(final MutationEngineConfiguration config) {
+  public GregorMutationEngine(EngineArguments arguments, final MutationEngineConfiguration config) {
+    this.arguments = arguments;
     this.methodFilter = config.methodFilter();
     this.mutationOperators.addAll(config.mutators());
   }
+
 
   @Override
   public Mutater createMutator(final ClassByteArraySource byteSource) {
@@ -67,6 +71,12 @@ public class GregorMutationEngine implements MutationEngine {
       }
 
     };
+  }
+
+
+  @Override
+  public EngineArguments arguments() {
+    return arguments;
   }
 
 }

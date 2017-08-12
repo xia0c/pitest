@@ -35,7 +35,7 @@ public class DefaultReporterTest {
     this.testee.describe(mi);
     final SafeDataInputStream is = resultToStream();
     assertEquals(Id.DESCRIBE, is.readByte());
-    assertEquals(is.read(MutationIdentifier.class), mi);
+    assertEquals(is.readSerializable(MutationIdentifier.class), mi);
   }
 
   @Test
@@ -47,8 +47,8 @@ public class DefaultReporterTest {
     this.testee.report(mi, ms);
     final SafeDataInputStream is = resultToStream();
     assertEquals(Id.REPORT, is.readByte());
-    assertEquals(is.read(MutationIdentifier.class), mi);
-    assertEquals(is.read(MutationStatusTestPair.class), ms);
+    assertEquals(is.readSerializable(MutationIdentifier.class), mi);
+    assertEquals(is.readSerializable(MutationStatusTestPair.class), ms);
   }
 
   private SafeDataInputStream resultToStream() {

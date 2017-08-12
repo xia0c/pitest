@@ -14,13 +14,17 @@
  */
 package org.pitest.mutationtest;
 
+import java.io.Serializable;
+
 import org.pitest.functional.Option;
 
-public final class MutationStatusTestPair {
+public final class MutationStatusTestPair implements Serializable {
 
+  private static final long serialVersionUID = 1L;
+  
   private final int             numberOfTestsRun;
   private final DetectionStatus status;
-  private final Option<String>  killingTest;
+  private final String  killingTest;
 
   public MutationStatusTestPair(final int numberOfTestsRun,
       final DetectionStatus status) {
@@ -30,7 +34,7 @@ public final class MutationStatusTestPair {
   public MutationStatusTestPair(final int numberOfTestsRun,
       final DetectionStatus status, final String killingTest) {
     this.status = status;
-    this.killingTest = Option.some(killingTest);
+    this.killingTest = killingTest;
     this.numberOfTestsRun = numberOfTestsRun;
   }
 
@@ -39,7 +43,7 @@ public final class MutationStatusTestPair {
   }
 
   public Option<String> getKillingTest() {
-    return this.killingTest;
+    return Option.some(this.killingTest);
   }
 
   public int getNumberOfTestsRun() {
@@ -48,10 +52,10 @@ public final class MutationStatusTestPair {
 
   @Override
   public String toString() {
-    if (this.killingTest.hasNone()) {
+    if (this.killingTest == null) {
       return this.status.name();
     } else {
-      return this.status.name() + " by " + this.killingTest.value();
+      return this.status.name() + " by " + this.killingTest;
     }
 
   }

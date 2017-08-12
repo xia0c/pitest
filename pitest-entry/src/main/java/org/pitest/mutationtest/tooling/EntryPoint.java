@@ -9,6 +9,7 @@ import org.pitest.classpath.ClassPath;
 import org.pitest.classpath.ClassPathByteArraySource;
 import org.pitest.classpath.CodeSource;
 import org.pitest.classpath.ProjectClassPaths;
+import org.pitest.classpath.TestClassIdentifier;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.execute.CoverageOptions;
 import org.pitest.coverage.execute.DefaultCoverageGenerator;
@@ -88,14 +89,15 @@ public class EntryPoint {
 
     final MutationResultListenerFactory reportFactory = settings
         .createListener();
+    
+    final TestClassIdentifier testIdentifier = settings.getTestClassIdentifier();
 
     final CoverageOptions coverageOptions = settings.createCoverageOptions();
     final LaunchOptions launchOptions = new LaunchOptions(ja,
         settings.getJavaExecutable(), data.getJvmArgs(), environmentVariables);
     final ProjectClassPaths cps = data.getMutationClassPaths();
 
-    final CodeSource code = new CodeSource(cps, coverageOptions.getPitConfig()
-        .testClassIdentifier());
+    final CodeSource code = new CodeSource(cps, testIdentifier);
 
     final Timings timings = new Timings();
     final CoverageGenerator coverageDatabase = new DefaultCoverageGenerator(

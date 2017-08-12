@@ -24,7 +24,7 @@ final class SendData implements SideEffect1<SafeDataOutputStream> {
   }
 
   private void sendArguments(final SafeDataOutputStream dos) {
-    dos.write(this.arguments);
+    dos.writeSerializable(this.arguments);
     dos.flush();
   }
 

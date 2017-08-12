@@ -14,6 +14,7 @@
  */
 package org.pitest.util;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
@@ -21,8 +22,9 @@ import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 
-public class Glob implements Predicate<String> {
+public class Glob implements Predicate<String>, Serializable {
 
+  private static final long serialVersionUID = 1L;
   private final Pattern regex;
 
   public Glob(final String glob) {

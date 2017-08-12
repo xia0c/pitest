@@ -18,7 +18,6 @@ import org.pitest.classinfo.ClassInfoMother;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classinfo.Repository;
 import org.pitest.functional.Option;
-import org.pitest.testapi.TestClassIdentifier;
 
 public class CodeSourceTest {
 
@@ -142,7 +141,7 @@ public class CodeSourceTest {
 
   @Test
   public void shouldAllowClientsToRetrieveBytecode() {
-    this.testee.fetchClassBytes(ClassName.fromString("Foo"));
+    this.testee.getBytes("Foo");
     verify(this.repository).querySource(ClassName.fromString("Foo"));
   }
 

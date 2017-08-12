@@ -23,6 +23,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -36,7 +37,6 @@ import org.apache.maven.model.Plugin;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.mockito.Mockito;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.util.Unchecked;
@@ -126,15 +126,6 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
   }
 
 
-  public void testParsersMutateStaticInitializersFlag() {
-    assertTrue(parseConfig(
-        "<mutateStaticInitializers>true</mutateStaticInitializers>")
-        .isMutateStaticInitializers());
-    assertFalse(parseConfig(
-        "<mutateStaticInitializers>false</mutateStaticInitializers>")
-        .isMutateStaticInitializers());
-  }
-
   public void testParsesNumberOfThreads() {
     final ReportOptions actual = parseConfig("<threads>42</threads>");
     assertEquals(42, actual.getNumberOfThreads());
@@ -213,12 +204,9 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
         "                      <param>car</param>" + //
         "                  </excludedMethods>";
     final ReportOptions actual = parseConfig(xml);
-    final Predicate<String> actualPredicate = Prelude.or(actual
-        .getExcludedMethods());
-    assertTrue(actualPredicate.apply("foox"));
-    assertTrue(actualPredicate.apply("barx"));
-    assertTrue(actualPredicate.apply("car"));
-    assertFalse(actualPredicate.apply("carx"));
+    final Collection<String> actualPredicate = actual
+        .getExcludedMethods();
+    assertThat(actualPredicate).containsAll(Arrays.asList("foo*", "bar*", "car"));
   }
 
   public void testParsesVerboseFlag() {
@@ -377,7 +365,12 @@ public class MojoToReportOptionsConverterTest extends BasePitMojoTest {
     assertEquals("foo", actual.getFreeFormProperties().get("foo"));
     assertEquals("bar", actual.getFreeFormProperties().get("bar"));
   }
-
+  
+  public void testParsesTestPlugin() {
+    final ReportOptions actual = parseConfig("<testPlugin>testng</testPlugin>");
+    assertEquals("testng", actual.getTestPlugin());
+  }
+  
   private ReportOptions parseConfig(final String xml) {
     try {
       final String pom = createPomWithConfiguration(xml);

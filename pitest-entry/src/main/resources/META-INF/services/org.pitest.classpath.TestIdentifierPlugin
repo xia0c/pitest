@@ -1,0 +1,2 @@
+org.pitest.junit.JUnitTestClassIdentifierPlugin
+org.pitest.testng.TestNGIdentifierPlugin

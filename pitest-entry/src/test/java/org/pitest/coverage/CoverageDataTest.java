@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.pitest.coverage.CoverageMother.aBlockLocation;
@@ -45,6 +45,7 @@ import org.pitest.coverage.CoverageMother.BlockLocationBuilder;
 import org.pitest.coverage.CoverageMother.CoverageResultBuilder;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
+import org.pitest.functional.Option;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
 import org.pitest.testapi.Description;
@@ -67,6 +68,7 @@ public class CoverageDataTest {
     MockitoAnnotations.initMocks(this);
     when(this.lm.mapLines(any(ClassName.class))).thenReturn(
         new HashMap<BlockLocation, Set<Integer>>());
+    when(this.code.findTestee(anyString())).thenReturn(Option.<ClassName>none());
     this.testee = new CoverageData(this.code, this.lm);
   }
 

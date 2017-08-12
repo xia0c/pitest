@@ -14,9 +14,8 @@
  */
 package org.pitest.junit;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.pitest.classinfo.ClassInfo;
+import org.pitest.classinfo.ClassName;
 import org.pitest.functional.Option;
 import org.pitest.functional.predicate.Predicate;
 
@@ -53,13 +52,13 @@ abstract class TestInfo {
   }
 
   private static boolean isJUnit3Test(final ClassInfo clazz) {
-    return clazz.descendsFrom(junit.framework.TestCase.class)
-        || clazz.descendsFrom(junit.framework.TestSuite.class);
+    return clazz.descendsFrom(ClassName.fromString("junit.framework.TestCase"))
+        || clazz.descendsFrom(ClassName.fromString("junit.framework.TestSuite"));
   }
 
   private static boolean isJUnit4Test(final ClassInfo clazz) {
-    return clazz.hasAnnotation(RunWith.class)
-        || clazz.hasAnnotation(Test.class);
+    return clazz.hasAnnotation(ClassName.fromString("org.junit.runner.RunWith"))
+        || clazz.hasAnnotation(ClassName.fromString("org.junit.Test"));
   }
 
 }

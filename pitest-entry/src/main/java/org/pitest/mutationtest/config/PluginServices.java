@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.pitest.classpath.TestIdentifierPlugin;
 import org.pitest.mutationtest.MutationEngineFactory;
 import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.build.MutationGrouperFactory;
@@ -39,6 +40,7 @@ public class PluginServices {
     l.addAll(findGroupers());
     l.addAll(findTestPrioritisers());
     l.addAll(findInterceptors());
+    l.addAll(findTestIdentifiers());
     return l;
   }
 
@@ -53,6 +55,7 @@ public class PluginServices {
     l.addAll(nullPlugins());
     return l;
   }
+  
   Collection<? extends TestPluginFactory> findTestFrameworkPlugins() {
     return ServiceLoader.load(TestPluginFactory.class, this.loader);
   }
@@ -81,4 +84,8 @@ public class PluginServices {
     return ServiceLoader.load(MutationInterceptorFactory.class, this.loader);
   }
 
+
+  public Collection<? extends TestIdentifierPlugin> findTestIdentifiers() {
+    return ServiceLoader.load(TestIdentifierPlugin.class, this.loader);
+  }
 }

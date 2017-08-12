@@ -1,5 +1,10 @@
 package org.pitest.coverage.execute;
 
+import java.io.Serializable;
+import java.util.Collection;
+
+import org.pitest.functional.F;
+
 /*
  * Copyright 2010 Henry Coles
  *
@@ -16,38 +21,60 @@ package org.pitest.coverage.execute;
  */
 
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.testapi.Configuration;
+import org.pitest.functional.prelude.Prelude;
+import org.pitest.mutationtest.config.TestPluginArguments;
+import org.pitest.util.Glob;
 
-public class CoverageOptions {
+public class CoverageOptions implements Serializable {
 
-  private final Predicate<String> filter;
+  private static final long serialVersionUID = 1L;
+  private final Collection<String>      include;
+  private final Collection<String>      exclude;  
   private final boolean           verbose;
-  private final Configuration     pitConfig;
+  private final TestPluginArguments        pitConfig;
   private final int               maxDependencyDistance;
 
-  public CoverageOptions(final Predicate<String> filter,
-      final Configuration pitConfig, final boolean verbose,
+  public CoverageOptions(final Collection<String> include, final Collection<String> exclude,
+      final TestPluginArguments pitConfig, final boolean verbose,
       final int maxDependencyDistance) {
-    this.filter = filter;
+    this.include = include;
+    this.exclude = exclude;
     this.verbose = verbose;
     this.pitConfig = pitConfig;
     this.maxDependencyDistance = maxDependencyDistance;
   }
 
+  @SuppressWarnings("unchecked")
   public Predicate<String> getFilter() {
-    return this.filter;
+    return Prelude.and(Prelude.or(Glob.toGlobPredicates(include)), 
+        Prelude.not(Prelude.or(Glob.toGlobPredicates(exclude))), 
+        Prelude.not(commonClasses()));
   }
 
   public boolean isVerbose() {
     return this.verbose;
   }
 
-  public Configuration getPitConfig() {
+  public TestPluginArguments getPitConfig() {
     return this.pitConfig;
   }
 
   public int getDependencyAnalysisMaxDistance() {
     return this.maxDependencyDistance;
   }
+  
+  @SuppressWarnings("unchecked")
+  private static F<String, Boolean> commonClasses() {
+    return Prelude.or(
+        glob("java/*"), 
+        glob("sun/*"),
+        glob("org/pitest/coverage/*"),
+        glob("org/pitest/reloc/*"), 
+        glob("org/pitest/boot/*"));
+  }
 
+  private static Glob glob(String match) {
+    return new Glob(match);
+  }  
+  
 }

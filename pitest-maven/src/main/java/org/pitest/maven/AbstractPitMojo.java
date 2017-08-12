@@ -36,6 +36,13 @@ public class AbstractPitMojo extends AbstractMojo {
 
   // Concrete List types declared for all fields to work around maven 2 bug
 
+
+  /**
+   * Test plugin to use
+   */
+  @Parameter(property = "testPlugin", defaultValue = "junit")
+  private String testPlugin;
+  
   /**
    * Classes to include in mutation test
    */
@@ -110,12 +117,6 @@ public class AbstractPitMojo extends AbstractMojo {
    */
   @Parameter(defaultValue = "1", property = "threads")
   private int                         threads;
-
-  /**
-   * Mutate static initializers
-   */
-  @Parameter(defaultValue = "false", property = "mutateStaticInitializers")
-  private boolean                     mutateStaticInitializers;
 
   /**
    * Detect inlined code
@@ -457,10 +458,6 @@ public class AbstractPitMojo extends AbstractMojo {
     return this.threads;
   }
 
-  public boolean isMutateStaticInitializers() {
-    return this.mutateStaticInitializers;
-  }
-
   public List<String> getMutators() {
     return this.mutators;
   }
@@ -586,6 +583,10 @@ public class AbstractPitMojo extends AbstractMojo {
   
   public ArrayList<String> getFeatures() {
     return features;
+  }
+
+  public String getTestPlugin() {
+    return testPlugin;
   }
 
   

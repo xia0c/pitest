@@ -29,16 +29,15 @@ import org.pitest.coverage.CoverageData;
 import org.pitest.coverage.CoverageExporter;
 import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.CoverageResult;
-import org.pitest.coverage.analysis.LineMapper;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.SideEffect1;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
+import org.pitest.mutationtest.config.TestPluginArguments;
 import org.pitest.process.LaunchOptions;
 import org.pitest.process.ProcessArgs;
-import org.pitest.testapi.Configuration;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Log;
 import org.pitest.util.PitError;
@@ -201,7 +200,7 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
   }
 
   @Override
-  public Configuration getConfiguration() {
+  public TestPluginArguments getConfiguration() {
     return this.coverageOptions.getPitConfig();
   }
 

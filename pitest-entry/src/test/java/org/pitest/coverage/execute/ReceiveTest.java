@@ -71,7 +71,7 @@ public class ReceiveTest {
     when(this.is.readString()).thenReturn("foo");
     this.testee.apply(Id.CLAZZ, this.is);
 
-    when(this.is.read(Description.class)).thenReturn(this.description);
+    when(this.is.readSerializable(Description.class)).thenReturn(this.description);
     when(this.is.readInt()).thenReturn(1);
     when(this.is.readLong()).thenReturn(1l,
         CodeCoverageStore.encode(classId, probeNumber));

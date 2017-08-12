@@ -66,7 +66,7 @@ final class Receive implements ReceiveStrategy {
   }
 
   private void handleTestEnd(final SafeDataInputStream is) {
-    final Description d = is.read(Description.class);
+    final Description d = is.readSerializable(Description.class);
     final int numberOfResults = is.readInt();
 
     final Set<BlockLocation> hits = new HashSet<BlockLocation>(numberOfResults);

@@ -19,6 +19,10 @@ import java.io.Serializable;
 import org.pitest.mutationtest.build.PercentAndConstantTimeoutStrategy;
 
 public enum ConfigOption {
+  /**
+   * The test plugin to use
+   */
+  TEST_PLUGIN("testPlugin"),
 
   /**
    * The directory to write report sot
@@ -50,11 +54,6 @@ public enum ConfigOption {
    * Arguments to launch child processes with
    */
   CHILD_JVM("jvmArgs"),
-  /**
-   * Do/don't mutate static initializers (slow as new ClassLoader required for
-   * each mutant)
-   */
-  MUTATE_STATIC_INITIALIZERS("mutateStaticInits", false),
 
   /**
    * Do/don't create timestamped folders for reports

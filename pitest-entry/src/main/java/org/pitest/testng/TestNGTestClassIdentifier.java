@@ -16,8 +16,8 @@ package org.pitest.testng;
 
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassName;
+import org.pitest.classpath.BaseTestClassIdentifier;
 import org.pitest.functional.Option;
-import org.pitest.testapi.BaseTestClassIdentifier;
 
 public class TestNGTestClassIdentifier extends BaseTestClassIdentifier {
   private static final ClassName ANNOTATION_NAME = ClassName.fromString(

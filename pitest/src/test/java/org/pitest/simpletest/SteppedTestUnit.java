@@ -20,7 +20,6 @@ import org.pitest.functional.Option;
 import org.pitest.testapi.AbstractTestUnit;
 import org.pitest.testapi.Description;
 import org.pitest.testapi.ResultCollector;
-import org.pitest.util.IsolationUtils;
 
 /**
  * @author henry
@@ -75,8 +74,7 @@ public class SteppedTestUnit extends AbstractTestUnit {
       if (tResult == null) {
         return new java.lang.AssertionError("Expected exception "
             + this.expected);
-      } else if (IsolationUtils.convertForClassLoader(loader,
-          this.expected.value()).isAssignableFrom(tResult.getClass())) {
+      } else if (this.expected.value().isAssignableFrom(tResult.getClass())) {
         return null;
       }
     }

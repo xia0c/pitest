@@ -10,10 +10,8 @@ import java.util.Collections;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.junit.Test;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.testapi.TestGroupConfig;
-import org.pitest.util.Glob;
 
 public class SurefireConfigConverterTest {
 
@@ -42,16 +40,14 @@ public class SurefireConfigConverterTest {
 
     ReportOptions actual = this.testee
         .update(this.options, this.surefireConfig);
-    Predicate<String> predicate = actual.getExcludedClasses().iterator().next();
-    assertThat(predicate.apply("com.example.FailingTest")).isTrue();
-    assertThat(predicate.apply("com.example.Test")).isFalse();
+    String predicate = actual.getExcludedClasses().iterator().next();
+    assertThat(predicate).isEqualTo("**.FailingTest");
   }
 
   @Test
   public void shouldKeepExistingExclusions() throws Exception {
     this.surefireConfig = makeConfig("<excludes><exclude>A</exclude><exclude>B</exclude></excludes>");
-    this.options.setExcludedClasses(Collections
-        .<Predicate<String>> singletonList(new Glob("Foo")));
+    this.options.setExcludedClasses(Collections.singletonList("Foo"));
     ReportOptions actual = this.testee
         .update(this.options, this.surefireConfig);
 

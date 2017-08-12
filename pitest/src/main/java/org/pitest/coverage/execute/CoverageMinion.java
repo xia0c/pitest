@@ -28,18 +28,23 @@ import java.util.logging.Logger;
 import org.pitest.boot.HotSwapAgent;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassPathByteArraySource;
+import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.coverage.CoverageTransformer;
 import org.pitest.dependency.DependencyExtractor;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.PitHelpError;
+import org.pitest.mutationtest.config.ClientPluginServices;
+import org.pitest.mutationtest.config.MinionSettings;
 import org.pitest.mutationtest.mocksupport.BendJavassistToMyWillTransformer;
 import org.pitest.mutationtest.mocksupport.JavassistInputStreamInterceptorAdapater;
+import org.pitest.testapi.Configuration;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.execute.FindTestUnits;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Glob;
+import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
 import org.pitest.util.SafeDataInputStream;
 
@@ -64,7 +69,7 @@ public class CoverageMinion {
       final SafeDataInputStream dis = new SafeDataInputStream(
           s.getInputStream());
       
-      final CoverageOptions paramsFromParent = dis.read(CoverageOptions.class);
+      final CoverageOptions paramsFromParent = dis.readSerializable(CoverageOptions.class);
   
       Log.setVerbose(paramsFromParent.isVerbose());
     
@@ -73,15 +78,10 @@ public class CoverageMinion {
       
       CodeCoverageStore.init(invokeQueue);
 
-      LOG.info("Checking environment");
-
-      if (paramsFromParent.getPitConfig().verifyEnvironment().hasSome()) {
-        throw paramsFromParent.getPitConfig().verifyEnvironment().value();
-      }
-
       HotSwapAgent.addTransformer(new CoverageTransformer(
           convertToJVMClassFilter(paramsFromParent.getFilter())));
-
+      
+     
       final List<TestUnit> tus = getTestsFromParent(dis, paramsFromParent);
 
       LOG.info(tus.size() + " tests received");
@@ -139,8 +139,11 @@ public class CoverageMinion {
       throws IOException {
     final List<ClassName> classes = receiveTestClassesFromParent(dis);
     Collections.sort(classes); // ensure classes loaded in a consistent order
+    
+    Configuration testPlugin = createTestPlugin(paramsFromParent);
+    verifyEnvironment(testPlugin);
 
-    final List<TestUnit> tus = discoverTests(paramsFromParent, classes);
+    final List<TestUnit> tus = discoverTests(testPlugin, classes);
 
     final DependencyFilter filter = new DependencyFilter(
         new DependencyExtractor(new ClassPathByteArraySource(),
@@ -156,14 +159,28 @@ public class CoverageMinion {
   }
 
   private static List<TestUnit> discoverTests(
-      final CoverageOptions paramsFromParent, final List<ClassName> classes) {
-    final FindTestUnits finder = new FindTestUnits(
-        paramsFromParent.getPitConfig());
+      final Configuration testPlugin, final List<ClassName> classes) {    
+    final FindTestUnits finder = new FindTestUnits(testPlugin);
     final List<TestUnit> tus = finder
         .findTestUnitsForAllSuppliedClasses(FCollection.flatMap(classes,
             ClassName.nameToClass()));
     LOG.info("Found  " + tus.size() + " tests");
     return tus;
+  }
+
+  private static Configuration createTestPlugin(
+      final CoverageOptions paramsFromParent) {
+    ClientPluginServices plugins = new ClientPluginServices(IsolationUtils.getContextClassLoader());
+    MinionSettings factory = new MinionSettings(plugins);
+    Configuration testPlugin = factory.getTestFrameworkPlugin(paramsFromParent.getPitConfig(), ClassloaderByteArraySource.fromContext());
+    return testPlugin;
+  }
+  
+  private static void verifyEnvironment(Configuration config) {
+    LOG.info("Checking environment");
+    if (config.verifyEnvironment().hasSome()) {
+      throw config.verifyEnvironment().value();
+    } 
   }
 
   private static List<ClassName> receiveTestClassesFromParent(

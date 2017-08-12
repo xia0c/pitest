@@ -95,6 +95,7 @@ public class MojoToReportOptionsConverter {
           .getOutputDirectory()));
     }
 
+    data.setTestPlugin(this.mojo.getTestPlugin());
     data.setClassPathElements(classPath);
     data.setDependencyAnalysisMaxDistance(this.mojo.getMaxDependencyDistance());
     data.setFailWhenNoMutations(shouldFailWhenNoMutations());
@@ -102,11 +103,8 @@ public class MojoToReportOptionsConverter {
     data.setTargetClasses(determineTargetClasses());
     data.setTargetTests(determineTargetTests());
 
-    data.setMutateStaticInitializers(this.mojo.isMutateStaticInitializers());
-    data.setExcludedMethods(globStringsToPredicates(this.mojo
-        .getExcludedMethods()));
-    data.setExcludedClasses(globStringsToPredicates(this.mojo
-        .getExcludedClasses()));
+    data.setExcludedMethods(this.mojo.getExcludedMethods());
+    data.setExcludedClasses(this.mojo.getExcludedClasses());
     data.setNumberOfThreads(this.mojo.getThreads());
     data.setExcludedRunners(this.mojo.getExcludedRunners());
 
@@ -226,11 +224,6 @@ public class MojoToReportOptionsConverter {
     }
   }
 
-  private Collection<Predicate<String>> globStringsToPredicates(
-      final List<String> excludedMethods) {
-    return FCollection.map(excludedMethods, Glob.toGlobPredicate());
-  }
-
   private Collection<Predicate<String>> determineTargetTests() {
     return FCollection.map(this.mojo.getTargetTests(), Glob.toGlobPredicate());
   }
@@ -256,17 +249,17 @@ public class MojoToReportOptionsConverter {
       }
   }  
   
-  private Collection<Predicate<String>> determineTargetClasses() {
+  private Collection<String> determineTargetClasses() {
     return useConfiguredTargetClassesOrFindOccupiedPackages(this.mojo.getTargetClasses());
   }
 
-  private Collection<Predicate<String>> useConfiguredTargetClassesOrFindOccupiedPackages(
+  private Collection<String> useConfiguredTargetClassesOrFindOccupiedPackages(
       final Collection<String> filters) {
     if (!hasValue(filters)) {
       this.mojo.getLog().info("Defaulting target classes to match packages in build directory");
-      return FCollection.map(findOccupiedPackages(), Glob.toGlobPredicate());
+      return findOccupiedPackages();
     } else {
-      return FCollection.map(filters, Glob.toGlobPredicate());
+      return filters;
     }
   }
   

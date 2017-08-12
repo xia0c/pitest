@@ -17,7 +17,6 @@ package org.pitest.mutationtest.tooling;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyCollection;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -43,7 +42,6 @@ import org.pitest.classinfo.HierarchicalClassId;
 import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.CoverageDatabase;
 import org.pitest.coverage.CoverageGenerator;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.HistoryStore;
@@ -54,6 +52,7 @@ import org.pitest.mutationtest.MutationResultListenerFactory;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
+import org.pitest.mutationtest.engine.EngineArguments;
 import org.pitest.mutationtest.engine.Mutater;
 import org.pitest.mutationtest.engine.MutationDetailsMother;
 import org.pitest.mutationtest.engine.MutationEngine;
@@ -114,11 +113,9 @@ public class MutationCoverageReportTest {
     mockMutationEngine();
   }
 
-  @SuppressWarnings("unchecked")
   private void mockMutationEngine() {
     when(
-        this.mutationFactory.createEngine(any(Predicate.class),
-            anyCollection())).thenReturn(
+        this.mutationFactory.createEngine(any(EngineArguments.class))).thenReturn(
                 this.engine);
     when(this.engine.createMutator(any(ClassByteArraySource.class)))
     .thenReturn(this.mutater);

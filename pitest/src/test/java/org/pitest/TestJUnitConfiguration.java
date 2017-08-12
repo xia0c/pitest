@@ -14,9 +14,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.jmock.MockObjectTestCase;
 import org.junit.After;
 import org.junit.Before;
@@ -39,7 +36,6 @@ import org.pitest.functional.Option;
 import org.pitest.help.PitHelpError;
 import org.pitest.junit.JUnitCompatibleConfiguration;
 import org.pitest.testapi.Description;
-import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestListener;
 import org.pitest.testapi.TestResult;
 import org.pitest.testapi.TestUnit;
@@ -50,11 +46,12 @@ import org.pitest.testapi.execute.containers.UnContainer;
 
 import com.example.JUnitParamsTest;
 
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 public class TestJUnitConfiguration {
 
-  private final JUnitCompatibleConfiguration testee = new JUnitCompatibleConfiguration(
-                                                        new TestGroupConfig(), 
-                                                        Collections.<String>emptyList());
+  private final JUnitCompatibleConfiguration testee = new JUnitCompatibleConfiguration();
   private Pitest                             pitest;
   private Container                          container;
 

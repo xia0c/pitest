@@ -138,7 +138,7 @@ public class ClassInfo {
     return this.superClass.fetch();
   }
 
-  private boolean descendsFrom(final ClassName clazz) {
+  public boolean descendsFrom(final ClassName clazz) {
 
     if (this.getSuperClass().hasNone()) {
       return false;

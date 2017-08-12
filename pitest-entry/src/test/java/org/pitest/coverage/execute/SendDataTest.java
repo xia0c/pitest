@@ -33,7 +33,7 @@ public class SendDataTest {
   @Test
   public void shouldSendArgumentsToMinion() {
     this.testee.apply(this.os);
-    verify(this.os).write(this.arguments);
+    verify(this.os).writeSerializable(this.arguments);
   }
 
   @Test

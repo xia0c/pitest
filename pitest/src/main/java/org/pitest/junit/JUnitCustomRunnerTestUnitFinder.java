@@ -37,7 +37,6 @@ import org.pitest.reflection.IsAnnotatedWith;
 import org.pitest.reflection.Reflection;
 import org.pitest.testapi.TestUnit;
 import org.pitest.testapi.TestUnitFinder;
-import org.pitest.util.IsolationUtils;
 
 public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
 
@@ -157,12 +156,7 @@ public class JUnitCustomRunnerTestUnitFinder implements TestUnitFinder {
   }
 
   private TestUnit descriptionToTest(final Description description) {
-
     Class<?> clazz = description.getTestClass();
-    if (clazz == null) {
-      clazz = IsolationUtils.convertForClassLoader(
-          IsolationUtils.getContextClassLoader(), description.getClassName());
-    }
     return new AdaptedJUnitTestUnit(clazz,
         Option.some(createFilterFor(description)));
   }

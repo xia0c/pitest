@@ -8,10 +8,8 @@ import java.util.List;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
-import org.pitest.functional.predicate.Predicate;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.testapi.TestGroupConfig;
-import org.pitest.util.Glob;
 
 /**
  * Extracts configuration from surefire plugin and create pitest equivalents
@@ -50,17 +48,17 @@ public class SurefireConfigConverter {
   }
 
   private void convertExcludes(ReportOptions option, Xpp3Dom configuration) {
-    List<Predicate<String>> excludes = FCollection.map(
+    List<String> excludes = FCollection.map(
         extract("excludes", configuration), filenameToClassFilter());
     excludes.addAll(option.getExcludedClasses());
     option.setExcludedClasses(excludes);
   }
 
-  private F<String, Predicate<String>> filenameToClassFilter() {
-    return new F<String, Predicate<String>>() {
+  private F<String, String> filenameToClassFilter() {
+    return new F<String, String>() {
       @Override
-      public Predicate<String> apply(String a) {
-        return new Glob(a.replace(".java", "").replace("/", "."));
+      public String apply(String a) {
+        return a.replace(".java", "").replace("/", ".");
       }
     };
   }

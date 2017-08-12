@@ -20,29 +20,30 @@ import org.pitest.functional.F;
 import org.pitest.functional.predicate.Predicate;
 import org.pitest.functional.prelude.Prelude;
 import org.pitest.mutationtest.MutationEngineFactory;
+import org.pitest.mutationtest.engine.EngineArguments;
 import org.pitest.mutationtest.engine.MutationEngine;
 import org.pitest.mutationtest.engine.gregor.GregorMutationEngine;
 import org.pitest.mutationtest.engine.gregor.MethodInfo;
 import org.pitest.mutationtest.engine.gregor.MethodMutatorFactory;
+import org.pitest.util.Glob;
 
 public final class GregorEngineFactory implements MutationEngineFactory {
 
   @Override
-  public MutationEngine createEngine(
-      final Predicate<String> excludedMethods,
-      final Collection<String> mutators) {
-    return createEngineWithMutators(excludedMethods,
-           createMutatorListFromArrayOrUseDefaults(mutators));
+  public MutationEngine createEngine(EngineArguments arguments) {
+    return createEngineWithMutators(arguments, Prelude.or(Glob.toGlobPredicates(arguments.excludedMethods())),
+           createMutatorListFromArrayOrUseDefaults(arguments.mutators()));
   }
 
-  public MutationEngine createEngineWithMutators(
+  private MutationEngine createEngineWithMutators(
+      EngineArguments arguments,
       final Predicate<String> excludedMethods,
       final Collection<? extends MethodMutatorFactory> mutators) {
 
     final Predicate<MethodInfo> filter = Prelude.not(stringToMethodInfoPredicate(excludedMethods));
     final DefaultMutationEngineConfiguration config = new DefaultMutationEngineConfiguration(
         filter, mutators);
-    return new GregorMutationEngine(config);
+    return new GregorMutationEngine(arguments, config);
   }
 
   private static Collection<? extends MethodMutatorFactory> createMutatorListFromArrayOrUseDefaults(

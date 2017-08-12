@@ -35,7 +35,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.functional.predicate.Predicate;
-import org.pitest.functional.prelude.Prelude;
+import org.pitest.junit.JUnitTestPlugin;
 import org.pitest.mutationtest.config.ConfigOption;
 import org.pitest.mutationtest.config.PluginServices;
 import org.pitest.mutationtest.config.ReportOptions;
@@ -112,31 +112,6 @@ public class OptionsParserTest {
   public void shouldParseCommaSeparatedListOfFeatures() {
     final ReportOptions actual = parseAddingRequiredArgs("--features", "+FOO(),-BAR(value=1 & value=2)");
     assertThat(actual.getFeatures()).contains("+FOO()", "-BAR(value=1 & value=2)");
-  }
-
-  @Test
-  public void shouldDetermineIfMutateStaticInitializersFlagIsSet() {
-    final ReportOptions actual = parseAddingRequiredArgs("--mutateStaticInits");
-    assertTrue(actual.isMutateStaticInitializers());
-  }
-
-  @Test
-  public void shouldDetermineIfMutateStaticInitializersFlagIsSetWhenTrueSupplied() {
-    final ReportOptions actual = parseAddingRequiredArgs("--mutateStaticInits",
-        "true");
-    assertTrue(actual.isMutateStaticInitializers());
-  }
-
-  @Test
-  public void shouldDetermineIfMutateStaticInitializersFlagIsSetWhenFalseSupplied() {
-    final ReportOptions actual = parseAddingRequiredArgs("--mutateStaticInits=false");
-    assertFalse(actual.isMutateStaticInitializers());
-  }
-
-  @Test
-  public void shouldNotCreateMutationsInStaticInitializerByDefault() {
-    final ReportOptions actual = parseAddingRequiredArgs("");
-    assertFalse(actual.isMutateStaticInitializers());
   }
 
   @Test
@@ -265,12 +240,8 @@ public class OptionsParserTest {
   public void shouldParseCommaSeparatedListOfExcludedMethods() {
     final ReportOptions actual = parseAddingRequiredArgs("--excludedMethods",
         "foo*,bar*,car");
-    final Predicate<String> actualPredicate = Prelude.or(actual
-        .getExcludedMethods());
-    assertTrue(actualPredicate.apply("foox"));
-    assertTrue(actualPredicate.apply("barx"));
-    assertTrue(actualPredicate.apply("car"));
-    assertFalse(actualPredicate.apply("carx"));
+    final Collection<String> actualPredicate = actual.getExcludedMethods();
+    assertThat(actualPredicate).containsAll(Arrays.asList("foo*", "bar*", "car"));
   }
 
   @Test
@@ -501,6 +472,18 @@ public class OptionsParserTest {
     assertEquals("2", actual.getFreeFormProperties().getProperty("bar"));
   }
 
+  @Test
+  public void shouldDefaultToJUnitTestPlugin() {
+    final ReportOptions actual = parseAddingRequiredArgs();
+    assertEquals(JUnitTestPlugin.NAME, actual.getTestPlugin());
+  }
+  
+  @Test
+  public void shouldParseTestPlugin() {
+    final ReportOptions actual = parseAddingRequiredArgs("--testPlugin", "testng");
+    assertEquals("testng", actual.getTestPlugin());
+  }
+  
   private String getNonCanonicalGregorEngineClassPath() {
     final String gregorEngineClassPath = GregorMutationEngine.class
         .getProtectionDomain().getCodeSource().getLocation().getFile();

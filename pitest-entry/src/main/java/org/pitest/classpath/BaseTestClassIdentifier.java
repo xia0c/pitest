@@ -1,4 +1,4 @@
-package org.pitest.testapi;
+package org.pitest.classpath;
 
 import org.pitest.classinfo.ClassInfo;
 

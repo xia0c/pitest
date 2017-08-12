@@ -109,23 +109,9 @@ public class PitestTaskTest {
   }
 
   @Test
-  public void shouldPassMutateStaticInitsOptionToJavaTask() {
-    this.pitestTask.setMutateStaticInits("true");
-    this.pitestTask.execute(this.java);
-    verify(this.arg).setValue("--mutateStaticInits=true");
-  }
-
-  @Test
   public void shouldNotPassMutateStaticInitsOptionToJavaTaskWhenNoValueSet() {
     this.pitestTask.execute(this.java);
     verify(this.arg, never()).setValue("--mutateStaticInits=true");
-  }
-
-  @Test
-  public void shouldPassMutateStaticInitsOptionToJavaTaskWhenValueIsFalse() {
-    this.pitestTask.setMutateStaticInits("false");
-    this.pitestTask.execute(this.java);
-    verify(this.arg).setValue("--mutateStaticInits=false");
   }
 
   @Test
@@ -452,6 +438,13 @@ public class PitestTaskTest {
     this.pitestTask.setJVM("foo");
     this.pitestTask.execute(this.java);
     verify(this.arg).setValue("--jvmPath=foo");
+  }
+  
+  @Test
+  public void shouldPassTestPluginToJavaTask() {
+    this.pitestTask.setTestPlugin("testng");
+    this.pitestTask.execute(this.java);
+    verify(this.arg).setValue("--testPlugin=testng");
   }
   
   private static class PathMatcher extends ArgumentMatcher<Path> {

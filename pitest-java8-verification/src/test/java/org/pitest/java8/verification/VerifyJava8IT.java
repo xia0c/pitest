@@ -1,5 +1,6 @@
 package org.pitest.java8.verification;
 
+import static java.util.Arrays.asList;
 import static org.pitest.mutationtest.DetectionStatus.KILLED;
 
 import org.junit.Test;
@@ -21,7 +22,7 @@ public class VerifyJava8IT extends ReportTestBase {
   @Test
   public void worksWithJava8Bytecode() {
       this.data.setTargetTests(predicateFor(Java8ClassTest.class));
-      this.data.setTargetClasses(predicateFor("com.example.java8.Java8Class*"));
+      this.data.setTargetClasses(asList("com.example.java8.Java8Class*"));
       setMutators("INCREMENTS");
       createAndRun();
       verifyResults(KILLED, KILLED);
@@ -33,7 +34,7 @@ public class VerifyJava8IT extends ReportTestBase {
   @Test
   public void worksWithJava8DefaultInterfaceMethods() {
       this.data.setTargetTests(predicateFor(Java8InterfaceTest.class));
-      this.data.setTargetClasses(predicateFor("com.example.java8.Java8Interface*"));
+      this.data.setTargetClasses(asList("com.example.java8.Java8Interface*"));
       setMutators("INCREMENTS");
       createAndRun();
       verifyResults(KILLED, KILLED);
@@ -47,7 +48,7 @@ public class VerifyJava8IT extends ReportTestBase {
   @Test
   public void worksWithAnonymousClasses() {
       this.data.setTargetTests(predicateFor(AnonymousClassTest.class));
-      this.data.setTargetClasses(predicateFor("com.example.java8.AnonymousClass*"));
+      this.data.setTargetClasses(asList("com.example.java8.AnonymousClass*"));
       setMutators("INCREMENTS");
       createAndRun();
       verifyResults(KILLED, KILLED);
@@ -59,7 +60,7 @@ public class VerifyJava8IT extends ReportTestBase {
   @Test
   public void worksWithJava8LambdaExpressions() {
       this.data.setTargetTests(predicateFor(Java8LambdaExpressionTest.class));
-      this.data.setTargetClasses(predicateFor("com.example.java8.Java8LambdaExpression*"));
+      this.data.setTargetClasses(asList("com.example.java8.Java8LambdaExpression*"));
       setMutators("INCREMENTS");
       createAndRun();
       verifyResults(KILLED, KILLED);

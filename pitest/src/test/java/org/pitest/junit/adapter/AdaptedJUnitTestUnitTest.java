@@ -27,7 +27,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pitest.functional.Option;
 import org.pitest.testapi.ResultCollector;
-import org.pitest.util.ClassLoaderDetectionStrategy;
 import org.pitest.util.IsolationUtils;
 
 public class AdaptedJUnitTestUnitTest {
@@ -62,17 +61,16 @@ public class AdaptedJUnitTestUnitTest {
 
   @Test
   public void shouldCallNotifyStartWhenExecutingInOwnClassLoader() {
-    verifyNotifyStart(IsolationUtils.loaderDetectionStrategy());
+    verifyNotifyStart();
   }
 
   @Test
   public void shouldCallNotifyStartWhenExecutingInForeignClassLoader() {
-    verifyNotifyStart(neverMatchLoaderDetectionStrategy());
+    verifyNotifyStart();
   }
 
-  private void verifyNotifyStart(
-      final ClassLoaderDetectionStrategy classLoaderDetectionStrategy) {
-    createTestee(classLoaderDetectionStrategy, HideFromJUnit.JUnit4Test.class,
+  private void verifyNotifyStart() {
+    createTestee(HideFromJUnit.JUnit4Test.class,
         "pass");
     this.testee.execute(IsolationUtils.getContextClassLoader(), this.rc);
     verify(this.rc).notifyStart(this.testee.getDescription());
@@ -80,17 +78,11 @@ public class AdaptedJUnitTestUnitTest {
 
   @Test
   public void shouldCallNotifyEndOnSuccessWhenExecutingInOwnClassLoader() {
-    verifyNotifyEnd(IsolationUtils.loaderDetectionStrategy());
+    verifyNotifyEnd();
   }
 
-  @Test
-  public void shouldCallNotifyEndOnSuccessWhenExecutingInForeignClassLoader() {
-    verifyNotifyEnd(neverMatchLoaderDetectionStrategy());
-  }
-
-  private void verifyNotifyEnd(
-      final ClassLoaderDetectionStrategy classLoaderDetectionStrategy) {
-    createTestee(classLoaderDetectionStrategy, HideFromJUnit.JUnit4Test.class,
+  private void verifyNotifyEnd() {
+    createTestee(HideFromJUnit.JUnit4Test.class,
         "pass");
     this.testee.execute(IsolationUtils.getContextClassLoader(), this.rc);
     verify(this.rc).notifyEnd(this.testee.getDescription());
@@ -98,17 +90,11 @@ public class AdaptedJUnitTestUnitTest {
 
   @Test
   public void shouldCallNotifyEndWithThrowableOnFailureWhenExecutingInOwnClassLoader() {
-    verifyNotifyEndWithThrowable(IsolationUtils.loaderDetectionStrategy());
+    verifyNotifyEndWithThrowable();
   }
 
-  @Test
-  public void shouldCallNotifyEndWithThrowableOnFailureWhenExecutingInForeignClassLoader() {
-    verifyNotifyEndWithThrowable(neverMatchLoaderDetectionStrategy());
-  }
-
-  private void verifyNotifyEndWithThrowable(
-      final ClassLoaderDetectionStrategy classLoaderDetectionStrategy) {
-    createTestee(classLoaderDetectionStrategy, HideFromJUnit.JUnit4Test.class,
+  private void verifyNotifyEndWithThrowable() {
+    createTestee(HideFromJUnit.JUnit4Test.class,
         "fail");
     this.testee.execute(IsolationUtils.getContextClassLoader(), this.rc);
     verify(this.rc).notifyEnd(eq(this.testee.getDescription()),
@@ -116,9 +102,8 @@ public class AdaptedJUnitTestUnitTest {
   }
 
   private void createTestee(
-      final ClassLoaderDetectionStrategy classLoaderDetectionStrategy,
       final Class<?> clazz, final String method) {
-    this.testee = new AdaptedJUnitTestUnit(classLoaderDetectionStrategy, clazz,
+    this.testee = new AdaptedJUnitTestUnit(clazz,
         createFilter(clazz, method));
   }
 
@@ -138,18 +123,6 @@ public class AdaptedJUnitTestUnitTest {
 
     };
     return Option.some(f);
-  }
-
-  private ClassLoaderDetectionStrategy neverMatchLoaderDetectionStrategy() {
-    return new ClassLoaderDetectionStrategy() {
-
-      @Override
-      public boolean fromDifferentLoader(final Class<?> clazz,
-          final ClassLoader loader) {
-        return true;
-      }
-
-    };
   }
 
 }

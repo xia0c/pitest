@@ -15,29 +15,18 @@
 package org.pitest.junit;
 
 import java.util.Arrays;
-import java.util.Collection;
 
 import org.pitest.extension.common.CompoundTestSuiteFinder;
 import org.pitest.functional.Option;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.testapi.Configuration;
-import org.pitest.testapi.TestClassIdentifier;
-import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestSuiteFinder;
 import org.pitest.testapi.TestUnitFinder;
 
 public class JUnitCompatibleConfiguration implements Configuration {
 
-  private final TestGroupConfig config;
-  private final Collection<String> excludedRunners;
-
   private static final JUnitVersion MIN_JUNIT_VERSION = JUnitVersion.parse("4.6");
-  
-  public JUnitCompatibleConfiguration(TestGroupConfig config, Collection<String> excludedRunners) {
-    this.config = config;
-    this.excludedRunners = excludedRunners;
-  }
 
   @Override
   public TestUnitFinder testUnitFinder() {
@@ -50,11 +39,6 @@ public class JUnitCompatibleConfiguration implements Configuration {
   public TestSuiteFinder testSuiteFinder() {
     return new CompoundTestSuiteFinder(Arrays.<TestSuiteFinder> asList(
         new JUnit4SuiteFinder(), new RunnerSuiteFinder()));
-  }
-
-  @Override
-  public TestClassIdentifier testClassIdentifier() {
-    return new JUnitTestClassIdentifier(this.config, this.excludedRunners);
   }
 
   @Override

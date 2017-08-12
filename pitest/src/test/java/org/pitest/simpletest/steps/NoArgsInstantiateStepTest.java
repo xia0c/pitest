@@ -15,10 +15,8 @@
 package org.pitest.simpletest.steps;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import org.pitest.util.IsolationUtils;
 
 public class NoArgsInstantiateStepTest {
 
@@ -29,18 +27,6 @@ public class NoArgsInstantiateStepTest {
     final NoArgsInstantiateStepTest actual = (NoArgsInstantiateStepTest) testee
         .execute(this.getClass().getClassLoader(), null, null);
     assertNotNull(actual);
-  }
-
-  @Test
-  public void shouldSerializeAndDeserializeByXStreamWithoutError()
-      throws Exception {
-    try {
-      final NoArgsInstantiateStep testee = new NoArgsInstantiateStep(
-          NoArgsInstantiateStepTest.class);
-      IsolationUtils.clone(testee);
-    } catch (final Throwable t) {
-      fail();
-    }
   }
 
 }

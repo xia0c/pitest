@@ -17,8 +17,6 @@ package org.pitest.junit;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
-import junit.framework.TestCase;
-import junit.runner.Version;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +32,9 @@ import org.pitest.classinfo.Repository;
 import org.pitest.classpath.ClassloaderByteArraySource;
 import org.pitest.testapi.TestGroupConfig;
 import org.pitest.util.IsolationUtils;
+
+import junit.framework.TestCase;
+import junit.runner.Version;
 
 public class JUnitTestClassIdentifierTest {
 

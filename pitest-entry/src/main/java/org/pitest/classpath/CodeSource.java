@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.pitest.classinfo.ClassByteArraySource;
 import org.pitest.classinfo.ClassInfo;
 import org.pitest.classinfo.ClassInfoSource;
 import org.pitest.classinfo.ClassName;
@@ -18,12 +19,11 @@ import org.pitest.classinfo.TestToClassMapper;
 import org.pitest.functional.F;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.testapi.TestClassIdentifier;
 
 /**
  * Provides access to code and tests on the classpath
  */
-public class CodeSource implements ClassInfoSource {
+public class CodeSource implements ClassInfoSource, ClassByteArraySource {
 
   private final ProjectClassPaths   classPath;
   private final Repository          classRepository;
@@ -77,11 +77,10 @@ public class CodeSource implements ClassInfoSource {
     return FCollection.flatMap(classes, nameToClassInfo());
   }
 
-  // not used but keep to allow plugins to query bytecode
-  public Option<byte[]> fetchClassBytes(final ClassName clazz) {
-    return this.classRepository.querySource(clazz);
+  public Option<byte[]> getBytes(String clazz) {
+    return this.classRepository.querySource(ClassName.fromString(clazz));
   }
-
+  
   @Override
   public Option<ClassInfo> fetchClass(final ClassName clazz) {
     return this.classRepository.fetchClass(clazz);

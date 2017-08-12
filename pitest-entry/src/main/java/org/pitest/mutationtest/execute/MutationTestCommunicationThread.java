@@ -42,7 +42,7 @@ public class MutationTestCommunicationThread extends CommunicationThread {
 
     @Override
     public void apply(final SafeDataOutputStream dos) {
-      dos.write(this.arguments);
+      dos.writeSerializable(this.arguments);
       dos.flush();
     }
   }
@@ -68,15 +68,15 @@ public class MutationTestCommunicationThread extends CommunicationThread {
     }
 
     private void handleReport(final SafeDataInputStream is) {
-      final MutationIdentifier mutation = is.read(MutationIdentifier.class);
+      final MutationIdentifier mutation = is.readSerializable(MutationIdentifier.class);
       final MutationStatusTestPair value = is
-          .read(MutationStatusTestPair.class);
+          .readSerializable(MutationStatusTestPair.class);
       this.idMap.put(mutation, value);
       LOG.fine(mutation + " " + value);
     }
 
     private void handleDescribe(final SafeDataInputStream is) {
-      final MutationIdentifier mutation = is.read(MutationIdentifier.class);
+      final MutationIdentifier mutation = is.readSerializable(MutationIdentifier.class);
       this.idMap.put(mutation, new MutationStatusTestPair(1,
           DetectionStatus.STARTED));
     }

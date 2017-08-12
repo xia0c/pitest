@@ -30,7 +30,7 @@ public class CoveragePipe implements CoverageReceiver {
     final Collection<Long> hits = CodeCoverageStore.getHits();
 
     this.dos.writeByte(Id.OUTCOME);
-    this.dos.write(description);
+    this.dos.writeSerializable(description);
     this.dos.writeInt(hits.size());
     for (final Long each : hits) {
       this.dos.writeLong(each);

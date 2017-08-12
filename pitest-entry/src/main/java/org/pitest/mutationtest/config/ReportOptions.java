@@ -69,11 +69,11 @@ public class ReportOptions {
           "org.slf4j",
           "org.apache.commons.logging");
 
-  private Collection<Predicate<String>>  targetClasses;
-  private Collection<Predicate<String>>  excludedMethods                = Collections
+  private Collection<String>             targetClasses;
+  private Collection<String>             excludedMethods                = Collections
       .emptyList();
 
-  private Collection<Predicate<String>>  excludedClasses                = Collections
+  private Collection<String>             excludedClasses                = Collections
       .emptyList();
 
   private Collection<String>             codePaths;
@@ -89,7 +89,6 @@ public class ReportOptions {
   private Collection<String>             features;
 
   private int                            dependencyAnalysisMaxDistance;
-  private boolean                        mutateStaticInitializers       = false;
 
   private final List<String>             jvmArgs                        = new ArrayList<String>();
   private int                            numberOfThreads                = 0;
@@ -127,6 +126,8 @@ public class ReportOptions {
   private int maxSurvivors;
   
   private Collection<String>             excludedRunners                = new ArrayList<String>();
+  
+  private String                         testPlugin                     = "junit";
 
   public boolean isVerbose() {
     return this.verbose;
@@ -242,14 +243,14 @@ public class ReportOptions {
     };
   }
 
-  public Collection<Predicate<String>> getTargetClasses() {
+  public Collection<String> getTargetClasses() {
     return this.targetClasses;
   }
 
   @SuppressWarnings("unchecked")
   public Predicate<String> getTargetClassesFilter() {
-    final Predicate<String> filter = Prelude.and(or(this.targetClasses),
-        not(isBlackListed(ReportOptions.this.excludedClasses)));
+    final Predicate<String> filter = Prelude.and(or(Glob.toGlobPredicates(this.targetClasses)),
+        not(isBlackListed(Glob.toGlobPredicates(ReportOptions.this.excludedClasses))));
     checkNotTryingToMutateSelf(filter);
     return filter;
   }
@@ -260,21 +261,12 @@ public class ReportOptions {
     }
   }
 
-  public void setTargetClasses(final Collection<Predicate<String>> targetClasses) {
+  public void setTargetClasses(final Collection<String> targetClasses) {
     this.targetClasses = targetClasses;
   }
 
-  public void setTargetTests(
-      final Collection<Predicate<String>> targetTestsPredicates) {
+  public void setTargetTests(final Collection<Predicate<String>> targetTestsPredicates) {
     this.targetTests = targetTestsPredicates;
-  }
-
-  public boolean isMutateStaticInitializers() {
-    return this.mutateStaticInitializers;
-  }
-
-  public void setMutateStaticInitializers(final boolean mutateStaticInitializers) {
-    this.mutateStaticInitializers = mutateStaticInitializers;
   }
 
   public int getNumberOfThreads() {
@@ -312,9 +304,8 @@ public class ReportOptions {
       // target classes filter covers both
     } else {
       return Prelude.and(or(this.targetTests),
-          not(isBlackListed(ReportOptions.this.excludedClasses)));
+          not(isBlackListed(Glob.toGlobPredicates(ReportOptions.this.excludedClasses))));
     }
-
   }
 
   private static Predicate<String> isBlackListed(
@@ -334,12 +325,12 @@ public class ReportOptions {
     this.loggingClasses = loggingClasses;
   }
 
-  public Collection<Predicate<String>> getExcludedMethods() {
+  public Collection<String> getExcludedMethods() {
     return this.excludedMethods;
   }
 
   public void setExcludedMethods(
-      final Collection<Predicate<String>> excludedMethods) {
+      final Collection<String> excludedMethods) {
     this.excludedMethods = excludedMethods;
   }
 
@@ -348,7 +339,7 @@ public class ReportOptions {
   }
 
   public void setExcludedClasses(
-      final Collection<Predicate<String>> excludedClasses) {
+      final Collection<String> excludedClasses) {
     this.excludedClasses = excludedClasses;
   }
 
@@ -360,7 +351,7 @@ public class ReportOptions {
     return this.outputs;
   }
 
-  public Collection<Predicate<String>> getExcludedClasses() {
+  public Collection<String> getExcludedClasses() {
     return this.excludedClasses;
   }
 
@@ -563,7 +554,22 @@ public class ReportOptions {
   public void setExcludedRunners(Collection<String> excludedRunners) {
     this.excludedRunners = excludedRunners;
   }
+  
+  /**
+   * Creates a serializable subset of data for use in child processes
+   */
+  public TestPluginArguments createMinionSettings() {
+    return new TestPluginArguments(getTestPlugin(), this.getGroupConfig(), this.getExcludedRunners());
+  }
 
+  public String getTestPlugin() {
+    return testPlugin;
+  }
+
+  public void setTestPlugin(String testPlugin) {
+    this.testPlugin = testPlugin;
+  }
+  
   @Override
   public String toString() {
     return "ReportOptions [targetClasses=" + targetClasses
@@ -573,8 +579,8 @@ public class ReportOptions {
         + ", historyOutputLocation=" + historyOutputLocation + ", sourceDirs="
         + sourceDirs + ", classPathElements=" + classPathElements
         + ", mutators=" + mutators + ", dependencyAnalysisMaxDistance="
-        + dependencyAnalysisMaxDistance + ", mutateStaticInitializers="
-        + mutateStaticInitializers + ", jvmArgs=" + jvmArgs
+        + dependencyAnalysisMaxDistance
+        + ", jvmArgs=" + jvmArgs
         + ", numberOfThreads=" + numberOfThreads + ", timeoutFactor="
         + timeoutFactor + ", timeoutConstant=" + timeoutConstant
         + ", targetTests=" + targetTests + ", loggingClasses=" + loggingClasses

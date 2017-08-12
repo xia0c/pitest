@@ -1,4 +1,4 @@
-package org.pitest.coverage.codeassist;
+package com.example.coverage.execute;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -15,7 +15,8 @@ import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.CodeSource;
 import org.pitest.coverage.BlockLocation;
 import org.pitest.coverage.LineMap;
-import org.pitest.coverage.analysis.LineMapper;
+import org.pitest.coverage.codeassist.ClassUtils;
+import org.pitest.coverage.execute.LineMapper;
 import org.pitest.functional.Option;
 import org.pitest.mutationtest.engine.Location;
 import org.pitest.mutationtest.engine.MethodName;
@@ -111,7 +112,7 @@ public class LineMapperTest {
 
   private Map<BlockLocation, Set<Integer>> analyse(Class<?> clazz)
       throws ClassNotFoundException {
-    when(this.source.fetchClassBytes(any(ClassName.class))).thenReturn(
+    when(this.source.getBytes(any(String.class))).thenReturn(
         Option.some(ClassUtils.classAsBytes(clazz)));
     LineMap testee = new LineMapper(this.source);
     return testee.mapLines(ClassName.fromClass(clazz));

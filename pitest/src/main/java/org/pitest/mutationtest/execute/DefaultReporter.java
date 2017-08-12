@@ -35,7 +35,7 @@ public class DefaultReporter implements Reporter {
   public synchronized void describe(final MutationIdentifier i)
       throws IOException {
     this.w.writeByte(Id.DESCRIBE);
-    this.w.write(i);
+    this.w.writeSerializable(i);
     this.w.flush();
   }
 
@@ -43,8 +43,8 @@ public class DefaultReporter implements Reporter {
   public synchronized void report(final MutationIdentifier i,
       final MutationStatusTestPair mutationDetected) throws IOException {
     this.w.writeByte(Id.REPORT);
-    this.w.write(i);
-    this.w.write(mutationDetected);
+    this.w.writeSerializable(i);
+    this.w.writeSerializable(mutationDetected);
     this.w.flush();
   }
 

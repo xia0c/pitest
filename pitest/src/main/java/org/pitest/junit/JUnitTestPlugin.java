@@ -1,4 +1,4 @@
-package org.pitest.mutationtest.config;
+package org.pitest.junit;
 
 import java.util.Collection;
 
@@ -8,7 +8,7 @@ import org.pitest.testapi.TestGroupConfig;
 import org.pitest.testapi.TestPluginFactory;
 
 /**
- * Plugin that provides support for both JUnit 3, 4 and TestNG.
+ * Plugin that provides support for both JUnit 3, 4
  *
  * This plugin has been battle tested against many different strange uses and
  * abuses of JUnit found in real world code bases.
@@ -20,22 +20,25 @@ import org.pitest.testapi.TestPluginFactory;
  * Much of the complexity comes from splitting the tests down into smaller
  * units.
  *
- * Note. No service locator property file is provided for this plugin, it is
- * hard coded to be used when no other is provided on the classpath.
  */
-public class LegacyTestFrameworkPlugin implements TestPluginFactory {
+public class JUnitTestPlugin implements TestPluginFactory {
+  
+  public static final String NAME = "junit";
 
   @Override
   public String description() {
-    return "Default test framework support";
+    return "JUnit plugin";
   }
 
   @Override
   public Configuration createTestFrameworkConfiguration(TestGroupConfig config,
       ClassByteArraySource source, Collection<String> excludedRunners) {
-    final ConfigurationFactory configFactory = new ConfigurationFactory(config,
-        source, excludedRunners);
-    return configFactory.createConfiguration();
+    return new JUnitCompatibleConfiguration();
+  }
+
+  @Override
+  public String name() {
+    return NAME;
   }
 
 }

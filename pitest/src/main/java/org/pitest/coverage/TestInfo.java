@@ -14,25 +14,29 @@
  */
 package org.pitest.coverage;
 
+import java.io.Serializable;
+
 import org.pitest.classinfo.ClassName;
 import org.pitest.functional.F;
 import org.pitest.functional.Option;
 
-public final class TestInfo {
+public final class TestInfo implements Serializable {
 
+  private static final long serialVersionUID = 1L;
+  
   private final String            name;
   private final String            definingClass;
 
   private final int               time;
   private final int               blocks;
-  private final Option<ClassName> testee;
+  private final ClassName         testee;
 
   public TestInfo(final String definingClass, final String name,
       final int time, final Option<ClassName> testee, final int blocksCovered) {
     this.definingClass = internIfNotNull(definingClass);
     this.name = name;
     this.time = time;
-    this.testee = testee;
+    this.testee = testee.getOrElse(null);
     this.blocks = blocksCovered;
   }
 
@@ -75,7 +79,7 @@ public final class TestInfo {
   }
 
   public boolean directlyHits(final ClassName targetClass) {
-    return this.testee.hasSome() && this.testee.value().equals(targetClass);
+    return targetClass.equals(testee);
   }
 
   @Override

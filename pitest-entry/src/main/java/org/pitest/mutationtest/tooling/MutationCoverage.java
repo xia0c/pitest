@@ -37,7 +37,6 @@ import org.pitest.coverage.CoverageGenerator;
 import org.pitest.coverage.TestInfo;
 import org.pitest.functional.FCollection;
 import org.pitest.functional.Option;
-import org.pitest.functional.prelude.Prelude;
 import org.pitest.help.Help;
 import org.pitest.help.PitHelpError;
 import org.pitest.mutationtest.HistoryStore;
@@ -55,8 +54,9 @@ import org.pitest.mutationtest.build.TestPrioritiser;
 import org.pitest.mutationtest.build.WorkerFactory;
 import org.pitest.mutationtest.config.ReportOptions;
 import org.pitest.mutationtest.config.SettingsFactory;
+import org.pitest.mutationtest.engine.EngineArguments;
 import org.pitest.mutationtest.engine.MutationEngine;
-import org.pitest.mutationtest.execute.MutationAnalysisExecutor;  
+import org.pitest.mutationtest.execute.MutationAnalysisExecutor;
 import org.pitest.mutationtest.incremental.DefaultCodeHistory;
 import org.pitest.mutationtest.incremental.HistoryListener;
 import org.pitest.mutationtest.incremental.IncrementalAnalyser;
@@ -121,9 +121,8 @@ public class MutationCoverage {
 
     final MutationStatisticsListener stats = new MutationStatisticsListener();
 
-    final MutationEngine engine = this.strategies.factory().createEngine(
-        Prelude.or(this.data.getExcludedMethods()),
-        this.data.getMutators());
+    EngineArguments args = new EngineArguments(this.data.getMutationEngine(), this.data.getMutators(),  this.data.getExcludedMethods());
+    final MutationEngine engine = this.strategies.factory().createEngine(args);
 
     final List<MutationResultListener> config = createConfig(t0, coverageData,
         stats, engine);
