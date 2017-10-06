@@ -7,9 +7,15 @@ Read all about it at http://pitest.org
 
 ## Releases
 
-### 1.2.4-SNAPSHOT
+### 1.2.5-SNAPSHOT
 
-Nothing yet, why not contribute?
+* #407 - SCM goal cannot be run from within module (thanks @sbuisson)
+
+### 1.2.4
+
+* #397 - Report reasons maven modules skipped
+* #389 - Filter junk getClass null checks in lambdas
+* #400 - Update to ASM 6.0
 
 ### 1.2.3
 
