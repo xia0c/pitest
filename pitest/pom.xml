@@ -178,8 +178,7 @@
 						<configuration>
 							<dependencyDefinition>
 								show allResults
-								check absenceOfPackageCycles
-								&gt; 3 in org.pitest.*
+								check absenceOfPackageCycles &gt; 3 in org.pitest.*
 							</dependencyDefinition>
 						</configuration>
 					</execution>
