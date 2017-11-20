@@ -32,6 +32,10 @@ public class CheckTestHasFailedResultListener implements TestListener {
  
   private Option< ArrayList<Description> > lastFailingTest = Option.none();
   private int                 testsRun        = 0;
+
+  public void onTestError(final TestResult tr) {
+    recordFailingTest(tr);
+  }
  
   private void recordFailingTest(final TestResult tr) {
     if (!this.lastFailingTest.hasSome()) {
